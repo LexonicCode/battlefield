@@ -1,0 +1,9 @@
+{
+  "water": ["Water", "water", "Water Utilities"],
+  "energy": ["Energy", "energy", "Power"],
+  "fibre": ["Fibre", "fiber", "fibre", "telecoms"],
+  "gas": ["Gas", "gas"],
+  "infrastructure": ["Infrastructure", "infrastructure", "Transport"],
+  "renewables": ["Renewables", "renewables", "Renewable"],
+  "other": ["Other", "other", "Unknown", ""]
+}

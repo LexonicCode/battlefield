@@ -1,0 +1,33 @@
+{
+  "name": "battlefield",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "python -m unittest discover -s tests -v",
+    "normalize": "python scripts/normalize_customers.py",
+    "validate": "python scripts/validate_customers.py",
+    "dataset": "python scripts/build_battlefield_dataset.py"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LexonicCode/battlefield.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/LexonicCode/battlefield/issues"
+  },
+  "homepage": "https://github.com/LexonicCode/battlefield#readme",
+  "dependencies": {
+    "three": "^0.185.0"
+  },
+  "devDependencies": {
+    "vite": "^8.1.1"
+  }
+}

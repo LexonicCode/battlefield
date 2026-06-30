@@ -1,0 +1,13 @@
+account_name,sector,supplier,value_estimate,total_spend,idox_penetration
+River Thames Water,Water,IDOX,120000,,68
+Northern Grid Energy,Energy,LANDMARK,,95000,12
+Metro Fibre Networks,Fibre,ESRI,210000,180000,0
+West Country Gas,Gas,UNKNOWN,,45000,0
+Urban Infrastructure Group,Infrastructure,Bentley,88000,,3
+Solaris Renewables,Renewables,Other,133000,120000,5
+Coastal Utilities,Water,,54000,,0
+Peak Wind Services,Renewables,Esri,,71000,1
+Beacon Telecom,Fibre,Unknown,47000,,0
+Central Power Assets,Energy,IDOX,99000,100000,22
+National Transport Works,Infrastructure,LANDMARK,,65000,6
+Frontier Pipeline,Gas,QGIS,76000,,0
