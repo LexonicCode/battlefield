@@ -1,7 +1,7 @@
 {
   "loaded_rows": 469,
   "rejected_rows": 0,
-  "duplicate_customer_ids": 1,
+  "duplicate_customer_ids": 0,
   "non_zero_normalized_value_count": 148,
   "non_zero_normalized_value_coverage_pct": 31.56,
   "unknown_supplier_count": 306,

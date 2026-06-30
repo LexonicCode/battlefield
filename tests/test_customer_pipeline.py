@@ -41,6 +41,31 @@ class CustomerPipelineTests(unittest.TestCase):
     def test_height_units_has_minimum(self):
         self.assertEqual(compute_height_units(0.0), 0.8)
 
+    def test_duplicate_account_ids_are_disambiguated(self):
+        rows, _, _, _ = normalize_rows(
+            [
+                {
+                    "account_name": "Duplicate Utilities",
+                    "sector": "Water",
+                    "supplier": "Idox",
+                    "value_estimate": "",
+                    "total_spend": "1000",
+                    "idox_penetration": "0",
+                },
+                {
+                    "account_name": "Duplicate Utilities",
+                    "sector": "Water",
+                    "supplier": "Idox",
+                    "value_estimate": "",
+                    "total_spend": "2000",
+                    "idox_penetration": "0",
+                },
+            ]
+        )
+        ids = [row.customer_id for row in rows]
+        self.assertEqual(ids[0], "duplicate-utilities__water")
+        self.assertEqual(ids[1], "duplicate-utilities__water--2")
+
 
 if __name__ == "__main__":
     unittest.main()

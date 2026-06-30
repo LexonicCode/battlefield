@@ -107,6 +107,7 @@ def normalize_rows(rows: Iterable[dict]) -> Tuple[List[CanonicalRow], List[dict]
     rejected: List[dict] = []
     unmapped_suppliers: set = set()
     unmapped_sectors: set = set()
+    customer_id_counts: Dict[str, int] = {}
 
     for row in rows:
         account_name = (row.get("account_name") or "").strip()
@@ -130,7 +131,10 @@ def normalize_rows(rows: Iterable[dict]) -> Tuple[List[CanonicalRow], List[dict]
         idox_penetration = parse_float(row.get("idox_penetration")) or 0.0
         normalized_value, value_source, value_confidence = canonicalize_value(value_estimate, total_spend)
 
-        customer_id = f"{slugify(account_name)}__{sector}"
+        base_customer_id = f"{slugify(account_name)}__{sector}"
+        customer_id_counts[base_customer_id] = customer_id_counts.get(base_customer_id, 0) + 1
+        occurrence = customer_id_counts[base_customer_id]
+        customer_id = base_customer_id if occurrence == 1 else f"{base_customer_id}--{occurrence}"
 
         normalized.append(
             CanonicalRow(
