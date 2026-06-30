@@ -103,6 +103,7 @@ def normalize_rows(rows: Iterable[dict]) -> Tuple[List[CanonicalRow], List[dict]
     rejected: List[dict] = []
     unmapped_suppliers: set = set()
     unmapped_sectors: set = set()
+    seen_customer_ids: Dict[str, int] = {}
 
     for row in rows:
         account_name = (row.get("account_name") or "").strip()
@@ -126,7 +127,10 @@ def normalize_rows(rows: Iterable[dict]) -> Tuple[List[CanonicalRow], List[dict]
         idox_penetration = parse_float(row.get("idox_penetration")) or 0.0
         normalized_value, value_source, value_confidence = canonicalize_value(value_estimate, total_spend)
 
-        customer_id = f"{slugify(account_name)}__{sector}"
+        customer_id_base = f"{slugify(account_name)}__{sector}"
+        occurrence = seen_customer_ids.get(customer_id_base, 0) + 1
+        seen_customer_ids[customer_id_base] = occurrence
+        customer_id = customer_id_base if occurrence == 1 else f"{customer_id_base}-{occurrence}"
 
         normalized.append(
             CanonicalRow(
@@ -212,13 +216,13 @@ def zone_for_cell(column: int, row: int) -> str:
     u = (column + 0.5) / GRID_WIDTH
     v = (row + 0.5) / GRID_HEIGHT
 
-    if v < 0.22 and u > 0.52:
+    if v < 0.18 and u > 0.62:
         return "gas"
-    if u < 0.28 and v > 0.62:
+    if u < 0.24 and v > 0.68:
         return "transport"
-    if u < 0.45 and v <= 0.62:
+    if u < 0.44 and v <= 0.6:
         return "energy"
-    if u < 0.6 and v > 0.45:
+    if 0.44 <= u < 0.54 and v > 0.48:
         return "water"
     return "fibre"
 
