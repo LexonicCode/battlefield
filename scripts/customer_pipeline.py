@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Dict, Iterable, List, Tuple
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-RAW_CSV = REPO_ROOT / "data" / "raw" / "clean_customers.csv"
+RAW_CSV = REPO_ROOT / "data" / "raw" / "UtilitySectorData.csv"
 CANONICAL_JSON = REPO_ROOT / "data" / "canonical" / "customers.canonical.json"
 QUALITY_REPORT = REPO_ROOT / "data" / "reports" / "data_quality.json"
 BATTLEFIELD_JSON = REPO_ROOT / "data" / "canonical" / "customers.battlefield.json"
@@ -39,9 +39,16 @@ REQUIRED_COLUMNS = {
     "account_name",
     "sector",
     "supplier",
-    "value_estimate",
-    "total_spend",
-    "idox_penetration",
+}
+
+COLUMN_ALIASES = {
+    "account_owner": ("account_owner", "Account Owner"),
+    "account_name": ("account_name", "Account Name"),
+    "sector": ("sector", "Sector"),
+    "supplier": ("supplier", "Supplier", "Supplier "),
+    "value_estimate": ("value_estimate", "Potential ACV"),
+    "total_spend": ("total_spend", "Current ACV"),
+    "idox_penetration": ("idox_penetration",),
 }
 
 
@@ -107,6 +114,7 @@ def normalize_rows(rows: Iterable[dict]) -> Tuple[List[CanonicalRow], List[dict]
     rejected: List[dict] = []
     unmapped_suppliers: set = set()
     unmapped_sectors: set = set()
+    seen_customer_ids: set = set()
 
     for row in rows:
         account_name = (row.get("account_name") or "").strip()
@@ -130,7 +138,20 @@ def normalize_rows(rows: Iterable[dict]) -> Tuple[List[CanonicalRow], List[dict]
         idox_penetration = parse_float(row.get("idox_penetration")) or 0.0
         normalized_value, value_source, value_confidence = canonicalize_value(value_estimate, total_spend)
 
-        customer_id = f"{slugify(account_name)}__{sector}"
+        base_customer_id = f"{slugify(account_name)}__{sector}"
+        account_owner = (row.get("account_owner") or "").strip()
+        candidate_ids = [base_customer_id]
+        if account_owner:
+            candidate_ids.append(f"{base_customer_id}__{slugify(account_owner)}")
+
+        customer_id = next((candidate for candidate in candidate_ids if candidate not in seen_customer_ids), None)
+        if customer_id is None:
+            suffix = 2
+            customer_id = f"{base_customer_id}-{suffix}"
+            while customer_id in seen_customer_ids:
+                suffix += 1
+                customer_id = f"{base_customer_id}-{suffix}"
+        seen_customer_ids.add(customer_id)
 
         normalized.append(
             CanonicalRow(
@@ -152,12 +173,33 @@ def normalize_rows(rows: Iterable[dict]) -> Tuple[List[CanonicalRow], List[dict]
 
 
 def read_raw_csv(path: Path = RAW_CSV) -> List[dict]:
-    with path.open("r", encoding="utf-8", newline="") as file:
+    with path.open("r", encoding="utf-8-sig", newline="") as file:
         reader = csv.DictReader(file)
-        missing_columns = REQUIRED_COLUMNS.difference(set(reader.fieldnames or []))
+        field_lookup = {
+            normalize_text(field_name): field_name for field_name in (reader.fieldnames or []) if field_name
+        }
+
+        column_map = {}
+        for canonical_column, aliases in COLUMN_ALIASES.items():
+            source_column = next(
+                (field_lookup[normalize_text(alias)] for alias in aliases if normalize_text(alias) in field_lookup),
+                None,
+            )
+            if source_column:
+                column_map[canonical_column] = source_column
+
+        missing_columns = REQUIRED_COLUMNS.difference(column_map.keys())
         if missing_columns:
             raise ValueError(f"Missing required columns: {sorted(missing_columns)}")
-        return list(reader)
+
+        rows = []
+        for row in reader:
+            canonical_row = {}
+            for key in COLUMN_ALIASES.keys():
+                source_column = column_map.get(key)
+                canonical_row[key] = row.get(source_column) if source_column else None
+            rows.append(canonical_row)
+        return rows
 
 
 def write_json(path: Path, payload: object) -> None:
