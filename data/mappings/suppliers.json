@@ -1,0 +1,7 @@
+{
+  "idox": ["IDOX", "Idox", "idox"],
+  "landmark": ["LANDMARK", "Landmark", "landmark"],
+  "esri": ["ESRI", "Esri", "esri"],
+  "other": ["OTHER", "Other", "other", "QGIS", "Bentley", "Intergraph"],
+  "unknown": ["UNKNOWN", "Unknown", "", "N/A", "na", "none", "null"]
+}
