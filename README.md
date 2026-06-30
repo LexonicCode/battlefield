@@ -4,7 +4,7 @@ Interactive 3D customer battlefield planner with deterministic data normalizatio
 
 ## Project structure
 
-- `data/raw/clean_customers.csv` - source input CSV
+- `data/raw/UtilitySectorData.csv` - source input CSV
 - `data/mappings/*.json` - supplier and sector taxonomy aliases
 - `data/canonical/customers.canonical.json` - normalized canonical records
 - `data/canonical/customers.battlefield.json` - render-ready dataset
