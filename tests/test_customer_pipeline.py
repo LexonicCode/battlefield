@@ -1,6 +1,16 @@
 import unittest
 
-from scripts.customer_pipeline import canonicalize_value, compute_height_units, normalize_rows
+from scripts.customer_pipeline import (
+    GRID_HEIGHT,
+    GRID_WIDTH,
+    SUPPLIER_COLORS,
+    ZONE_ORDER,
+    build_battlefield_rows,
+    canonicalize_value,
+    compute_height_units,
+    normalize_rows,
+    read_raw_csv,
+)
 
 
 class CustomerPipelineTests(unittest.TestCase):
@@ -40,6 +50,28 @@ class CustomerPipelineTests(unittest.TestCase):
 
     def test_height_units_has_minimum(self):
         self.assertEqual(compute_height_units(0.0), 0.8)
+
+    def test_dataset_maps_to_required_zones(self):
+        rows, _, _, _ = normalize_rows(read_raw_csv())
+        self.assertEqual(len(rows), 469)
+        self.assertEqual({row.sector for row in rows}, set(ZONE_ORDER))
+
+    def test_battlefield_rows_use_unique_grid_cells(self):
+        canonical_rows, _, _, _ = normalize_rows(read_raw_csv())
+        battlefield_rows = build_battlefield_rows([row.__dict__ for row in canonical_rows])
+        self.assertEqual(len(battlefield_rows), 469)
+
+        occupied = {(row["grid_column"], row["grid_row"]) for row in battlefield_rows}
+        self.assertEqual(len(occupied), len(battlefield_rows))
+
+        for row in battlefield_rows:
+            self.assertIn(row["sector"], ZONE_ORDER)
+            self.assertIn(row["supplier"], SUPPLIER_COLORS)
+            self.assertEqual(row["color"], SUPPLIER_COLORS[row["supplier"]])
+            self.assertGreaterEqual(row["grid_column"], 0)
+            self.assertGreaterEqual(row["grid_row"], 0)
+            self.assertLess(row["grid_column"], GRID_WIDTH)
+            self.assertLess(row["grid_row"], GRID_HEIGHT)
 
 
 if __name__ == "__main__":

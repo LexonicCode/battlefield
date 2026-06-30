@@ -51,10 +51,19 @@ python -m unittest discover -s tests -v
 - `idox` = blue `#1f6feb`
 - `landmark` = orange `#f79009`
 - `esri` = green `#2da44e`
-- `other` = purple `#8b5cf6`
-- `unknown` = pale grey `#d1d5db`
+- `ordnance_survey` = purple `#8b5cf6`
+- `other` = yellow `#facc15`
+- `unknown` = grey `#9ca3af`
+
+### Zones
+
+- `water`
+- `energy`
+- `fibre`
+- `gas`
+- `transport`
 
 ### Value-to-height mapping
 
-- `normalized_value` precedence: `value_estimate` > `total_spend` > `0`
-- `height_units = clamp(log10(normalized_value + 1) * 3.5, 0.8, 18.0)`
+- `ACV` precedence: `value_estimate` > `total_spend` > `0`
+- `height_units = clamp(log10(ACV + 1) * 3.5, 0.8, 18.0)`

@@ -21,19 +21,15 @@ SUPPLIER_COLORS = {
     "idox": "#1f6feb",
     "landmark": "#f79009",
     "esri": "#2da44e",
-    "other": "#8b5cf6",
-    "unknown": "#d1d5db",
+    "ordnance_survey": "#8b5cf6",
+    "other": "#facc15",
+    "unknown": "#9ca3af",
 }
 
-SECTOR_TERRITORY_CENTERS = {
-    "water": (-20.0, 0.0),
-    "energy": (0.0, 0.0),
-    "fibre": (20.0, 0.0),
-    "gas": (-10.0, 20.0),
-    "infrastructure": (10.0, 20.0),
-    "renewables": (0.0, -20.0),
-    "other": (30.0, 20.0),
-}
+ZONE_ORDER = ("water", "energy", "fibre", "gas", "transport")
+ZONE_LABELS = {zone: zone.title() for zone in ZONE_ORDER}
+GRID_WIDTH = 25
+GRID_HEIGHT = 25
 
 REQUIRED_COLUMNS = {
     "account_name",
@@ -118,7 +114,7 @@ def normalize_rows(rows: Iterable[dict]) -> Tuple[List[CanonicalRow], List[dict]
         sector_key = normalize_text(row.get("sector"))
 
         supplier = supplier_map.get(supplier_key, "other" if supplier_key else "unknown")
-        sector = sector_map.get(sector_key, "other")
+        sector = sector_map.get(sector_key, "transport")
 
         if supplier_key and supplier_key not in supplier_map:
             unmapped_suppliers.add(row.get("supplier"))
@@ -204,27 +200,46 @@ def axial_to_world(q: int, r: int, spacing: float = 2.8) -> Tuple[float, float]:
     return round(x, 3), round(z, 3)
 
 
-def axial_spiral(index: int) -> Tuple[int, int]:
-    if index == 0:
-        return 0, 0
-    directions = [(1, 0), (0, 1), (-1, 1), (-1, 0), (0, -1), (1, -1)]
-    ring = 1
-    while 1 + 3 * ring * (ring + 1) <= index:
-        ring += 1
-    ring -= 1
-    start_index = 1 + 3 * ring * (ring + 1)
-    offset = index - start_index
+def offset_to_world(column: int, row: int, spacing: float = 2.2) -> Tuple[float, float]:
+    centered_column = column - (GRID_WIDTH - 1) / 2
+    centered_row = row - (GRID_HEIGHT - 1) / 2
+    x = spacing * math.sqrt(3) * (centered_column + 0.5 * (row % 2))
+    z = spacing * 1.5 * centered_row
+    return round(x, 3), round(z, 3)
 
-    q, r = ring + 1, 0
-    steps = ring + 1
-    for direction in directions:
-        for _ in range(steps):
-            if offset == 0:
-                return q, r
-            q += direction[0]
-            r += direction[1]
-            offset -= 1
-    return q, r
+
+def zone_for_cell(column: int, row: int) -> str:
+    u = (column + 0.5) / GRID_WIDTH
+    v = (row + 0.5) / GRID_HEIGHT
+
+    if v < 0.22 and u > 0.52:
+        return "gas"
+    if u < 0.28 and v > 0.62:
+        return "transport"
+    if u < 0.45 and v <= 0.62:
+        return "energy"
+    if u < 0.6 and v > 0.45:
+        return "water"
+    return "fibre"
+
+
+def build_layout_cells() -> List[dict]:
+    cells: List[dict] = []
+    for row in range(GRID_HEIGHT):
+        for column in range(GRID_WIDTH):
+            x, z = offset_to_world(column, row)
+            zone = zone_for_cell(column, row)
+            cells.append(
+                {
+                    "grid_column": column,
+                    "grid_row": row,
+                    "zone": zone,
+                    "zone_label": ZONE_LABELS[zone],
+                    "x": x,
+                    "z": z,
+                }
+            )
+    return cells
 
 
 def build_battlefield_rows(canonical_rows: List[dict]) -> List[dict]:
@@ -232,20 +247,35 @@ def build_battlefield_rows(canonical_rows: List[dict]) -> List[dict]:
     for row in canonical_rows:
         by_sector.setdefault(row["sector"], []).append(row)
 
+    layout_cells = build_layout_cells()
+    cells_by_zone: Dict[str, List[dict]] = {}
+    for cell in layout_cells:
+        cells_by_zone.setdefault(cell["zone"], []).append(cell)
+
+    for zone in cells_by_zone:
+        cells_by_zone[zone].sort(key=lambda cell: (cell["grid_row"], cell["grid_column"]))
+
     battlefield_rows: List[dict] = []
-    for sector in sorted(by_sector.keys()):
-        rows = sorted(by_sector[sector], key=lambda row: row["customer_id"])
-        center_x, center_z = SECTOR_TERRITORY_CENTERS.get(sector, SECTOR_TERRITORY_CENTERS["other"])
+    for sector in ZONE_ORDER:
+        rows = sorted(by_sector.get(sector, []), key=lambda row: row["customer_id"])
+        zone_cells = cells_by_zone.get(sector, [])
+        if len(rows) > len(zone_cells):
+            raise ValueError(
+                f"Zone '{sector}' has {len(rows)} companies but only {len(zone_cells)} available hexes"
+            )
         for idx, row in enumerate(rows):
-            q, r = axial_spiral(idx)
-            offset_x, offset_z = axial_to_world(q, r)
+            cell = zone_cells[idx]
             battlefield_rows.append(
                 {
                     **row,
+                    "sector_label": ZONE_LABELS[sector],
+                    "acv": float(row["normalized_value"]),
                     "height_units": compute_height_units(float(row["normalized_value"])),
                     "color": SUPPLIER_COLORS.get(row["supplier"], SUPPLIER_COLORS["other"]),
-                    "x": round(center_x + offset_x, 3),
-                    "z": round(center_z + offset_z, 3),
+                    "x": cell["x"],
+                    "z": cell["z"],
+                    "grid_column": cell["grid_column"],
+                    "grid_row": cell["grid_row"],
                 }
             )
 

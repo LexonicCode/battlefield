@@ -3,10 +3,14 @@ from __future__ import annotations
 from customer_pipeline import (
     BATTLEFIELD_JSON,
     CANONICAL_JSON,
+    GRID_HEIGHT,
+    GRID_WIDTH,
     PUBLIC_BATTLEFIELD_JSON,
     REPO_ROOT,
     SUPPLIER_COLORS,
+    ZONE_ORDER,
     build_battlefield_rows,
+    build_layout_cells,
     write_json,
 )
 import json
@@ -15,11 +19,18 @@ import json
 def main() -> None:
     canonical_rows = json.loads(CANONICAL_JSON.read_text(encoding="utf-8"))
     battlefield_rows = build_battlefield_rows(canonical_rows)
+    layout_cells = build_layout_cells()
     payload = {
         "metadata": {
             "supplier_colors": SUPPLIER_COLORS,
-            "height_semantics": "height_units = clamp(log10(normalized_value + 1) * 3.5, 0.8, 18.0)",
-            "value_precedence": "value_estimate > total_spend > 0",
+            "height_semantics": "height_units = clamp(log10(ACV + 1) * 3.5, 0.8, 18.0)",
+            "acv_precedence": "value_estimate > total_spend > 0",
+            "zones": list(ZONE_ORDER),
+            "grid": {
+                "width": GRID_WIDTH,
+                "height": GRID_HEIGHT,
+                "cells": layout_cells,
+            },
         },
         "records": battlefield_rows,
     }
