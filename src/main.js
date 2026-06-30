@@ -2,6 +2,7 @@ import './styles.css';
 import { createBattlefieldScene } from './battlefield/scene.js';
 
 const app = document.querySelector('#app');
+document.documentElement.dataset.theme = document.documentElement.dataset.theme || 'dark';
 
 app.innerHTML = `
   <header>
@@ -24,6 +25,13 @@ app.innerHTML = `
     <div class="stats">
       <span id="record-count">0 / 0 visible</span>
     </div>
+    <label class="theme-toggle">
+      Theme
+      <select id="theme-toggle">
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+      </select>
+    </label>
   </section>
   <section class="layout">
     <div id="scene"></div>
@@ -34,11 +42,18 @@ app.innerHTML = `
   </section>
 `;
 
-createBattlefieldScene({
+const sceneApi = await createBattlefieldScene({
   container: document.querySelector('#scene'),
   detailPanel: document.querySelector('#details'),
   sectorFilter: document.querySelector('#sector-filter'),
   supplierFilter: document.querySelector('#supplier-filter'),
   accountSearch: document.querySelector('#account-search'),
   recordCount: document.querySelector('#record-count'),
+});
+
+const themeToggle = document.querySelector('#theme-toggle');
+themeToggle.addEventListener('change', () => {
+  const theme = themeToggle.value;
+  document.documentElement.dataset.theme = theme;
+  sceneApi.setTheme(theme);
 });
