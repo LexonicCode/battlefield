@@ -1,11 +1,11 @@
 {
-  "loaded_rows": 12,
+  "loaded_rows": 469,
   "rejected_rows": 0,
-  "duplicate_customer_ids": 0,
-  "non_zero_normalized_value_count": 12,
-  "non_zero_normalized_value_coverage_pct": 100.0,
-  "unknown_supplier_count": 3,
-  "unknown_supplier_coverage_pct": 25.0,
+  "duplicate_customer_ids": 1,
+  "non_zero_normalized_value_count": 148,
+  "non_zero_normalized_value_coverage_pct": 31.56,
+  "unknown_supplier_count": 306,
+  "unknown_supplier_coverage_pct": 65.25,
   "unmapped_suppliers": [],
   "unmapped_sectors": []
 }

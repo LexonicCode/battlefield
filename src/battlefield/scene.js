@@ -2,7 +2,17 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { createHexColumn } from './hexTile.js';
 
-export async function createBattlefieldScene({ container, detailPanel, sectorFilter, supplierFilter }) {
+const currencyFormatter = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 });
+const percentageFormatter = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 1 });
+
+export async function createBattlefieldScene({
+  container,
+  detailPanel,
+  sectorFilter,
+  supplierFilter,
+  accountSearch,
+  recordCount,
+}) {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('#0f172a');
 
@@ -27,6 +37,8 @@ export async function createBattlefieldScene({ container, detailPanel, sectorFil
 
   const payload = await fetch('/data/customers.battlefield.json').then((r) => r.json());
   const records = payload.records;
+  const totalValue = records.reduce((sum, record) => sum + Number(record.normalized_value || 0), 0);
+  const nonZeroRecords = records.filter((record) => Number(record.normalized_value) > 0).length;
 
   const sectors = [...new Set(records.map((record) => record.sector))].sort();
   const suppliers = [...new Set(records.map((record) => record.supplier))].sort();
@@ -45,20 +57,33 @@ export async function createBattlefieldScene({ container, detailPanel, sectorFil
 
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
+  let hoveredMesh = null;
 
   function applyFilters() {
     const selectedSector = sectorFilter.value;
     const selectedSupplier = supplierFilter.value;
+    const searchText = accountSearch.value.trim().toLowerCase();
+    let visibleCount = 0;
+
     for (const mesh of meshes) {
-      const { sector, supplier } = mesh.userData;
+      const { sector, supplier, account_name: accountName } = mesh.userData;
       const sectorMatch = selectedSector === 'all' || sector === selectedSector;
       const supplierMatch = selectedSupplier === 'all' || supplier === selectedSupplier;
-      mesh.visible = sectorMatch && supplierMatch;
+      const accountMatch = !searchText || accountName.toLowerCase().includes(searchText);
+      mesh.visible = sectorMatch && supplierMatch && accountMatch;
+      if (mesh.visible) {
+        visibleCount += 1;
+      }
+    }
+
+    if (recordCount) {
+      recordCount.textContent = `${visibleCount} / ${records.length} visible`;
     }
   }
 
   sectorFilter.addEventListener('change', applyFilters);
   supplierFilter.addEventListener('change', applyFilters);
+  accountSearch.addEventListener('input', applyFilters);
 
   renderer.domElement.addEventListener('pointermove', (event) => {
     const rect = renderer.domElement.getBoundingClientRect();
@@ -66,6 +91,19 @@ export async function createBattlefieldScene({ container, detailPanel, sectorFil
     pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
     raycaster.setFromCamera(pointer, camera);
     const intersects = raycaster.intersectObjects(meshes.filter((mesh) => mesh.visible));
+
+    if (hoveredMesh && (!intersects.length || intersects[0].object !== hoveredMesh)) {
+      hoveredMesh.material.emissive.setHex(0x000000);
+      hoveredMesh.material.emissiveIntensity = 1;
+      hoveredMesh = null;
+    }
+
+    if (intersects.length) {
+      hoveredMesh = intersects[0].object;
+      hoveredMesh.material.emissive.setHex(0x1d4ed8);
+      hoveredMesh.material.emissiveIntensity = 0.5;
+    }
+
     renderer.domElement.style.cursor = intersects.length > 0 ? 'pointer' : 'default';
   });
 
@@ -84,12 +122,24 @@ export async function createBattlefieldScene({ container, detailPanel, sectorFil
       <h3>${data.account_name}</h3>
       <p><strong>Sector:</strong> ${data.sector}</p>
       <p><strong>Supplier:</strong> ${data.supplier}</p>
-      <p><strong>Normalized Value:</strong> £${Number(data.normalized_value).toLocaleString()}</p>
+      <p><strong>Normalized Value:</strong> ${currencyFormatter.format(Number(data.normalized_value || 0))}</p>
       <p><strong>Height Units:</strong> ${data.height_units}</p>
       <p><strong>Value Source:</strong> ${data.value_source}</p>
-      <p><strong>Idox Penetration:</strong> ${data.idox_penetration}</p>
+      <p><strong>Idox Penetration:</strong> ${percentageFormatter.format(Number(data.idox_penetration || 0))}%</p>
     `;
   });
+
+  detailPanel.innerHTML = `
+    <h2>Account details</h2>
+    <p class="hint">Click a hex column to inspect customer details.</p>
+    <div class="summary-grid">
+      <div><span>Total records</span><strong>${records.length}</strong></div>
+      <div><span>Non-zero value</span><strong>${nonZeroRecords}</strong></div>
+      <div><span>Total value</span><strong>${currencyFormatter.format(totalValue)}</strong></div>
+      <div><span>Sectors</span><strong>${sectors.length}</strong></div>
+    </div>
+  `;
+  applyFilters();
 
   function animate() {
     controls.update();
