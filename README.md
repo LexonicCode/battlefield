@@ -14,6 +14,49 @@ npm install
 npm run dev
 ```
 
+## Password protection (Vercel)
+
+This site is password-gated via:
+
+- Middleware (`/middleware.js`) that redirects unauthenticated users to `/login`
+- `POST /api/auth` that validates against `process.env.SITE_PASSWORD`
+- An HttpOnly auth cookie (`bf_auth`) with a 7-day lifetime
+- `GET /api/logout` to clear the cookie
+
+### Required environment variable
+
+- `SITE_PASSWORD` (required)
+
+### Configure in Vercel
+
+1. Open **Project → Settings → Environment Variables**
+2. Add `SITE_PASSWORD` with your desired password
+3. Redeploy so middleware/functions pick up the value
+
+### Configure for local development
+
+Create `.env.local` in the repository root:
+
+```bash
+SITE_PASSWORD=your-password-here
+```
+
+For local testing of middleware + serverless auth routes, use:
+
+```bash
+npx vercel dev
+```
+
+`npm run dev` still runs the plain Vite dev server and does not execute Vercel middleware/functions.
+
+### Behavior notes
+
+- Unauthenticated requests to app routes are redirected to `/login?next=...`
+- Successful login returns users to the originally requested path
+- Failed login redirects back to `/login` with an error message
+- Static/framework asset paths are excluded so required resources can load
+- Cookie flags: `HttpOnly`, `SameSite=Lax`, `Path=/`, `Secure` in production
+
 ## Build
 
 ```bash

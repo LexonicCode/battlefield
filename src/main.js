@@ -18,6 +18,7 @@ app.innerHTML = `
       <p id="stats"></p>
       <p><strong>Grid:</strong> target ${GRID_CONFIG.targetCellsPerAxis} × ${GRID_CONFIG.targetCellsPerAxis}, cellSize ${GRID_CONFIG.cellSize}, gap ${GRID_CONFIG.cellGap}, columnWidth ${GRID_CONFIG.columnWidth}</p>
       <p>Hover a column for details. Click to pin tooltip. Press Esc to clear.</p>
+      <p><a href="/api/logout">Logout</a></p>
     </aside>
   </section>
   <div id="tooltip" role="status" aria-live="polite"></div>
