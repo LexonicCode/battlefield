@@ -12,10 +12,11 @@ export const HEIGHT_CONFIG = {
 };
 
 export const SUPPLIER_COLORS = {
+  idox: '#1f6feb',
   esri: '#2da44e',
   landmark: '#f79009',
   os: '#8b5cf6',
   other: '#9ca3af',
 };
 
-export const CSV_SOURCES = ['/data/UtilityTop100.csv', '/data/UtilitySectorData.csv'];
+export const CSV_SOURCE = '/data/UtilityTop100.csv';

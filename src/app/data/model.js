@@ -52,6 +52,10 @@ export function parseCurrency(value) {
 export function getSupplierColorKey(supplierRaw) {
   const value = (supplierRaw || '').toLowerCase();
 
+  if (value.includes('idox')) {
+    return 'idox';
+  }
+
   if (value.includes('esri')) {
     return 'esri';
   }

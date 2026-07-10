@@ -28,9 +28,8 @@ npm run test
 
 ## Data source
 
-- Primary CSV: `public/data/UtilityTop100.csv`
-- Runtime fallback CSV: `public/data/UtilitySectorData.csv`
-- Repository raw copies: `data/raw/UtilityTop100.csv`, `data/raw/UtilitySectorData.csv`
+- Required CSV (only source used at runtime): `public/data/UtilityTop100.csv`
+- Repository raw copy: `data/raw/UtilityTop100.csv`
 
 ## Runtime data model
 
@@ -77,7 +76,8 @@ By `Current Main Supplier (Idox or Competitor Name)`:
 - ESRI → green
 - Landmark → orange
 - Ordnance Survey / OS → purple
-- all other values (including Idox, Unknown, blanks, etc.) → gray
+- Idox → blue
+- all other values (including Unknown/blanks/etc.) → gray
 
 ## Layout rules
 
@@ -93,3 +93,5 @@ By `Current Main Supplier (Idox or Competitor Name)`:
 - Legend for supplier colors
 - Hover tooltip with account details and computed total
 - Click to pin tooltip, `Esc` to clear
+- Light UI/theme (white/pale-grey background with white surface/panels)
+- In-scene labels for each `Company Activity` zone

@@ -1,20 +1,17 @@
-import { CSV_SOURCES, HEIGHT_CONFIG } from '../config.js';
+import { CSV_SOURCE, HEIGHT_CONFIG } from '../config.js';
 import { parseCsv } from './csv.js';
 import { normalizeRows } from './model.js';
 
-async function fetchFirstAvailable(urls) {
-  for (const url of urls) {
-    const response = await fetch(url);
-    if (response.ok) {
-      return response.text();
-    }
+async function fetchCsv(url) {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Unable to load required CSV source: ${url}`);
   }
-
-  throw new Error(`Unable to load CSV data from any source: ${urls.join(', ')}`);
+  return response.text();
 }
 
 export async function loadAccounts() {
-  const csvText = await fetchFirstAvailable(CSV_SOURCES);
+  const csvText = await fetchCsv(CSV_SOURCE);
   const rows = parseCsv(csvText);
 
   return normalizeRows(rows, {

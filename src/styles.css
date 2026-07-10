@@ -1,7 +1,7 @@
 :root {
   font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  color: #e2e8f0;
-  background: #020617;
+  color: #0f172a;
+  background: #f8fafc;
 }
 
 * {
@@ -11,7 +11,7 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: radial-gradient(circle at top, #0f172a, #020617);
+  background: #f8fafc;
 }
 
 #app {
@@ -30,7 +30,7 @@ header h1 {
 
 .subtitle {
   margin: 0.2rem 0 0;
-  color: #94a3b8;
+  color: #475569;
 }
 
 .layout {
@@ -42,9 +42,9 @@ header h1 {
 
 #scene,
 .panel {
-  border: 1px solid #1e293b;
+  border: 1px solid #d1d5db;
   border-radius: 0.5rem;
-  background: rgba(15, 23, 42, 0.82);
+  background: #ffffff;
 }
 
 #scene {
@@ -62,7 +62,7 @@ header h1 {
 
 .panel p {
   margin: 0.35rem 0;
-  color: #cbd5e1;
+  color: #334155;
 }
 
 #legend > div {
@@ -86,9 +86,9 @@ header h1 {
   display: none;
   padding: 0.6rem 0.7rem;
   border-radius: 0.45rem;
-  border: 1px solid #334155;
-  background: rgba(2, 6, 23, 0.95);
-  color: #e2e8f0;
+  border: 1px solid #cbd5e1;
+  background: rgba(255, 255, 255, 0.98);
+  color: #0f172a;
   font-size: 0.82rem;
   line-height: 1.35;
   pointer-events: none;
