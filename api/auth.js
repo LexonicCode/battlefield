@@ -1,11 +1,8 @@
-import { createHash, timingSafeEqual } from 'node:crypto';
+import { timingSafeEqual } from 'node:crypto';
 
 const COOKIE_NAME = 'bf_auth';
+const AUTH_COOKIE_VALUE = 'authenticated';
 const COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 7;
-
-function tokenForPassword(password) {
-  return createHash('sha256').update(`battlefield-auth:${password}`).digest('hex');
-}
 
 function normalizeReturnPath(raw) {
   if (!raw || typeof raw !== 'string') return '/';
@@ -74,6 +71,6 @@ export default async function handler(req, res) {
     return;
   }
 
-  setAuthCookie(res, tokenForPassword(expectedPassword));
+  setAuthCookie(res, AUTH_COOKIE_VALUE);
   redirect(res, returnTo);
 }
