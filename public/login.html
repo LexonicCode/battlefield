@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Battlefield Login</title>
+    <style>
+      :root {
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        color: #0f172a;
+        background: #f8fafc;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 1rem;
+      }
+      main {
+        width: min(100%, 28rem);
+        background: #ffffff;
+        border: 1px solid #d1d5db;
+        border-radius: 0.75rem;
+        padding: 1rem;
+      }
+      h1 {
+        margin-top: 0;
+      }
+      label,
+      input,
+      button {
+        display: block;
+        width: 100%;
+      }
+      input,
+      button {
+        font: inherit;
+        margin-top: 0.35rem;
+        border-radius: 0.5rem;
+        border: 1px solid #cbd5e1;
+        padding: 0.6rem 0.75rem;
+      }
+      button {
+        margin-top: 0.75rem;
+        background: #0f172a;
+        color: #fff;
+        border-color: #0f172a;
+        cursor: pointer;
+      }
+      .error {
+        display: none;
+        margin-top: 0.25rem;
+        color: #b91c1c;
+        font-size: 0.95rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Protected Battlefield</h1>
+      <p>Enter the site password to continue.</p>
+      <form method="POST" action="/api/auth">
+        <input id="returnTo" type="hidden" name="returnTo" value="/" />
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required />
+        <p id="errorMessage" class="error">Incorrect password. Please try again.</p>
+        <button type="submit">Continue</button>
+      </form>
+    </main>
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const returnToInput = document.getElementById('returnTo');
+      const next = params.get('next');
+      if (next && next.startsWith('/') && !next.startsWith('//')) {
+        returnToInput.value = next;
+      }
+      if (params.get('error') === '1') {
+        document.getElementById('errorMessage').style.display = 'block';
+      }
+    </script>
+  </body>
+</html>
