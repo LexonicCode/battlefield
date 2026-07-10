@@ -7,11 +7,22 @@ const app = document.querySelector('#app');
 app.innerHTML = `
   <header>
     <h1>Utility Account Battlefield</h1>
-    <p class="subtitle">Square-grid 3D columns grouped by Company Activity</p>
+    <p class="subtitle">Clean 3D account landscape with dynamic clustering and filters</p>
   </header>
   <section class="layout">
     <div id="scene"></div>
     <aside class="panel">
+      <h2>View controls</h2>
+      <div class="controls">
+        <label>
+          Cluster by
+          <select id="clusterBy"></select>
+        </label>
+        <label>
+          Filter value
+          <select id="filterValue"></select>
+        </label>
+      </div>
       <h2>Legend</h2>
       <div id="legend"></div>
       <h2>Dataset</h2>
@@ -29,4 +40,6 @@ createBattlefieldScene({
   legend: document.querySelector('#legend'),
   tooltip: document.querySelector('#tooltip'),
   stats: document.querySelector('#stats'),
+  clusterBy: document.querySelector('#clusterBy'),
+  filterValue: document.querySelector('#filterValue'),
 });

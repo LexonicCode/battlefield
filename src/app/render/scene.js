@@ -2,11 +2,44 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GRID_CONFIG, SUPPLIER_COLORS } from '../config.js';
 import { loadAccounts } from '../data/loadAccounts.js';
-import { layoutGridByZone } from '../layout/gridLayout.js';
+import { layoutGrid } from '../layout/gridLayout.js';
 import { createColumnMesh } from './columnMesh.js';
+
+const ALL_FILTER_VALUE = '__all__';
+
+const CLUSTER_OPTIONS = [
+  { key: 'companyActivity', label: 'Company Activity' },
+  { key: 'supplier', label: 'Supplier' },
+  { key: 'classification', label: 'Classification' },
+  { key: 'owner', label: 'Account Owner' },
+];
 
 function currency(value) {
   return `£${Math.round(value).toLocaleString()}`;
+}
+
+function formatSupplierLabel(value) {
+  if (value === 'idox') return 'Idox';
+  if (value === 'esri') return 'ESRI';
+  if (value === 'landmark') return 'Landmark';
+  if (value === 'os') return 'Ordnance Survey / OS';
+  return 'Other / Unknown';
+}
+
+function getAttributeValue(record, attribute) {
+  if (attribute === 'supplier') {
+    return record.colorKey || 'other';
+  }
+
+  const raw = record[attribute];
+  return String(raw ?? '').trim() || 'Unspecified';
+}
+
+function getAttributeLabel(attribute, value) {
+  if (attribute === 'supplier') {
+    return formatSupplierLabel(value);
+  }
+  return value;
 }
 
 function applyLegend(container) {
@@ -25,15 +58,15 @@ function createZoneLabel(activity) {
   if (!context) {
     return new THREE.Object3D();
   }
-  canvas.width = 512;
-  canvas.height = 128;
+  canvas.width = 560;
+  canvas.height = 132;
   context.fillStyle = 'rgba(255,255,255,0.92)';
-  context.strokeStyle = '#cbd5e1';
+  context.strokeStyle = '#ced7e5';
   context.lineWidth = 3;
   context.strokeRect(1.5, 1.5, canvas.width - 3, canvas.height - 3);
   context.fillRect(1.5, 1.5, canvas.width - 3, canvas.height - 3);
-  context.fillStyle = '#0f172a';
-  context.font = 'bold 46px Inter, Arial, sans-serif';
+  context.fillStyle = '#111827';
+  context.font = '600 44px Inter, Arial, sans-serif';
   context.textAlign = 'center';
   context.textBaseline = 'middle';
   context.fillText(activity, canvas.width / 2, canvas.height / 2);
@@ -42,7 +75,7 @@ function createZoneLabel(activity) {
   texture.needsUpdate = true;
   const material = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false });
   const sprite = new THREE.Sprite(material);
-  sprite.scale.set(12, 3, 1);
+  sprite.scale.set(12, 2.8, 1);
   sprite.renderOrder = 10;
   return sprite;
 }
@@ -55,6 +88,8 @@ function setTooltip(tooltip, data, x, y) {
     <strong>${data.accountName}</strong><br/>
     Activity: ${data.companyActivity}<br/>
     Supplier: ${data.supplierRaw || 'Unknown'}<br/>
+    Class: ${data.classification || 'Unspecified'}<br/>
+    Owner: ${data.owner || 'Unspecified'}<br/>
     Competitor: ${currency(data.competitorValue)}<br/>
     Upsell: ${currency(data.upsellValue)}<br/>
     Spend: ${currency(data.totalSpend)}<br/>
@@ -62,9 +97,76 @@ function setTooltip(tooltip, data, x, y) {
   `;
 }
 
-export async function createBattlefieldScene({ container, legend, tooltip, stats }) {
+function accountId(record) {
+  return `${record.accountName}::${record.owner}::${record.companyActivity}`;
+}
+
+function clearGroup(group) {
+  while (group.children.length) {
+    const child = group.children.pop();
+    if (child?.material?.map) {
+      child.material.map.dispose();
+    }
+    if (child?.material) {
+      child.material.dispose();
+    }
+    group.remove(child);
+  }
+}
+
+function buildAlignedGrid(positioned) {
+  if (!positioned.length) {
+    return null;
+  }
+
+  const minX = Math.min(...positioned.map((record) => record.gridX));
+  const maxX = Math.max(...positioned.map((record) => record.gridX));
+  const minZ = Math.min(...positioned.map((record) => record.gridZ));
+  const maxZ = Math.max(...positioned.map((record) => record.gridZ));
+  const cellsWide = Math.max(maxX - minX + 1 + GRID_CONFIG.zoneGapCells * 2, 24);
+  const cellsDeep = Math.max(maxZ - minZ + 1 + GRID_CONFIG.zoneGapCells * 2, 24);
+  const divisions = Math.max(cellsWide, cellsDeep);
+  const stride = GRID_CONFIG.cellSize + GRID_CONFIG.cellGap;
+  const size = divisions * stride;
+
+  const grid = new THREE.GridHelper(size, divisions, '#c6d3e5', '#dbe4f0');
+  grid.position.y = 0.01;
+  return grid;
+}
+
+function populateClusterSelect(clusterBy) {
+  clusterBy.innerHTML = '';
+  for (const option of CLUSTER_OPTIONS) {
+    const node = document.createElement('option');
+    node.value = option.key;
+    node.textContent = option.label;
+    clusterBy.appendChild(node);
+  }
+}
+
+function populateFilterSelect(filterValue, accounts, attribute) {
+  filterValue.innerHTML = '';
+
+  const allOption = document.createElement('option');
+  allOption.value = ALL_FILTER_VALUE;
+  allOption.textContent = `All ${CLUSTER_OPTIONS.find((option) => option.key === attribute)?.label ?? 'values'}`;
+  filterValue.appendChild(allOption);
+
+  const values = [...new Set(accounts.map((record) => getAttributeValue(record, attribute)))].sort((a, b) =>
+    getAttributeLabel(attribute, a).localeCompare(getAttributeLabel(attribute, b), undefined, { sensitivity: 'base' }),
+  );
+
+  for (const value of values) {
+    const node = document.createElement('option');
+    node.value = value;
+    node.textContent = getAttributeLabel(attribute, value);
+    filterValue.appendChild(node);
+  }
+}
+
+export async function createBattlefieldScene({ container, legend, tooltip, stats, clusterBy, filterValue }) {
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('#f8fafc');
+  scene.background = new THREE.Color('#edf3fb');
 
   const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 3000);
   camera.position.set(0, 95, 125);
@@ -81,54 +183,117 @@ export async function createBattlefieldScene({ container, legend, tooltip, stats
   controls.maxPolarAngle = Math.PI / 2.05;
   controls.target.set(0, 0, 0);
 
-  scene.add(new THREE.AmbientLight('#ffffff', 0.75));
-  const directional = new THREE.DirectionalLight('#ffffff', 1.2);
-  directional.position.set(30, 75, 40);
+  scene.add(new THREE.AmbientLight('#ffffff', 0.85));
+  const directional = new THREE.DirectionalLight('#ffffff', 1.3);
+  directional.position.set(40, 70, 30);
   scene.add(directional);
 
+  const accent = new THREE.DirectionalLight('#dbeafe', 0.45);
+  accent.position.set(-45, 45, -30);
+  scene.add(accent);
+
   const accounts = await loadAccounts();
-  const positioned = layoutGridByZone(accounts, GRID_CONFIG);
-
-  const spreadX = Math.max(...positioned.map((r) => Math.abs(r.x)), 1);
-  const spreadZ = Math.max(...positioned.map((r) => Math.abs(r.z)), 1);
-  const floorSize = Math.max(180, Math.ceil(Math.max(spreadX, spreadZ) * 2.6));
-  scene.add(new THREE.GridHelper(floorSize, Math.min(220, GRID_CONFIG.targetCellsPerAxis), '#d1d5db', '#e5e7eb'));
-
   const meshes = [];
-  for (const account of positioned) {
+  const meshById = new Map();
+
+  for (const account of accounts) {
     const mesh = createColumnMesh({
       width: GRID_CONFIG.columnWidth,
       height: account.scaledHeight,
       color: account.colorHex,
     });
-    mesh.position.x = account.x;
-    mesh.position.z = account.z;
+    mesh.position.set(0, account.scaledHeight / 2, 0);
+    mesh.visible = false;
     mesh.userData = account;
     scene.add(mesh);
     meshes.push(mesh);
+    meshById.set(accountId(account), mesh);
   }
 
-  const zonesByActivity = new Map();
-  for (const record of positioned) {
-    if (!zonesByActivity.has(record.companyActivity)) {
-      zonesByActivity.set(record.companyActivity, []);
-    }
-    zonesByActivity.get(record.companyActivity).push(record);
-  }
+  let grid = null;
+  const labelGroup = new THREE.Group();
+  scene.add(labelGroup);
 
-  for (const [activity, records] of zonesByActivity.entries()) {
-    const minX = Math.min(...records.map((record) => record.x));
-    const maxX = Math.max(...records.map((record) => record.x));
-    const minZ = Math.min(...records.map((record) => record.z));
-    const maxHeight = Math.max(...records.map((record) => record.scaledHeight));
-    const label = createZoneLabel(activity);
-    label.position.set((minX + maxX) / 2, maxHeight + 1.5, minZ - 1.8);
-    scene.add(label);
-  }
-
-  const zones = new Set(positioned.map((record) => record.companyActivity));
-  stats.textContent = `${positioned.length.toLocaleString()} accounts across ${zones.size} activity zones`;
+  populateClusterSelect(clusterBy);
   applyLegend(legend);
+
+  function applyLayout() {
+    const attribute = clusterBy.value || 'companyActivity';
+    const selectedFilter = filterValue.value || ALL_FILTER_VALUE;
+
+    const filteredAccounts = selectedFilter === ALL_FILTER_VALUE
+      ? accounts
+      : accounts.filter((record) => getAttributeValue(record, attribute) === selectedFilter);
+
+    const positioned = layoutGrid(filteredAccounts, GRID_CONFIG, (record) => getAttributeValue(record, attribute));
+    const visibleIds = new Set();
+
+    for (const record of positioned) {
+      const id = accountId(record);
+      const mesh = meshById.get(id);
+      if (!mesh) {
+        continue;
+      }
+      mesh.position.x = record.x;
+      mesh.position.z = record.z;
+      mesh.position.y = record.scaledHeight / 2;
+      mesh.visible = true;
+      mesh.userData = record;
+      visibleIds.add(id);
+    }
+
+    for (const [id, mesh] of meshById.entries()) {
+      if (!visibleIds.has(id)) {
+        mesh.visible = false;
+      }
+    }
+
+    if (grid) {
+      scene.remove(grid);
+    }
+    grid = buildAlignedGrid(positioned);
+    if (grid) {
+      scene.add(grid);
+    }
+
+    clearGroup(labelGroup);
+    const groupedRecords = new Map();
+    for (const record of positioned) {
+      const value = getAttributeValue(record, attribute);
+      if (!groupedRecords.has(value)) {
+        groupedRecords.set(value, []);
+      }
+      groupedRecords.get(value).push(record);
+    }
+
+    for (const [value, records] of groupedRecords.entries()) {
+      const minX = Math.min(...records.map((record) => record.x));
+      const maxX = Math.max(...records.map((record) => record.x));
+      const minZ = Math.min(...records.map((record) => record.z));
+      const maxHeight = Math.max(...records.map((record) => record.scaledHeight));
+      const label = createZoneLabel(getAttributeLabel(attribute, value));
+      label.position.set((minX + maxX) / 2, maxHeight + 1.5, minZ - 1.8);
+      labelGroup.add(label);
+    }
+
+    const clusterLabel = CLUSTER_OPTIONS.find((option) => option.key === attribute)?.label ?? 'Category';
+    stats.textContent = `${positioned.length.toLocaleString()} shown of ${accounts.length.toLocaleString()} accounts — clustered by ${clusterLabel}`;
+  }
+
+  clusterBy.value = 'companyActivity';
+  populateFilterSelect(filterValue, accounts, clusterBy.value);
+  filterValue.value = ALL_FILTER_VALUE;
+  applyLayout();
+
+  clusterBy.addEventListener('change', () => {
+    populateFilterSelect(filterValue, accounts, clusterBy.value);
+    filterValue.value = ALL_FILTER_VALUE;
+    applyLayout();
+  });
+
+  filterValue.addEventListener('change', () => {
+    applyLayout();
+  });
 
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
@@ -169,7 +334,7 @@ export async function createBattlefieldScene({ container, legend, tooltip, stats
     }
 
     const data = hit.userData;
-    lockedId = `${data.zoneKey}:${data.accountName}`;
+    lockedId = `${data.accountName}:${data.owner}`;
     setTooltip(tooltip, data, event.clientX, event.clientY);
   });
 

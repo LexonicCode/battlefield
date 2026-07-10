@@ -1,4 +1,9 @@
-export function layoutGridByZone(records, config) {
+function toGroupKey(value) {
+  const text = String(value ?? '').trim();
+  return text || 'Unspecified';
+}
+
+export function layoutGrid(records, config, groupBy = (record) => record.companyActivity) {
   const {
     targetCellsPerAxis,
     zoneGapCells,
@@ -8,16 +13,17 @@ export function layoutGridByZone(records, config) {
 
   const byZone = new Map();
   for (const record of records) {
-    if (!byZone.has(record.zoneKey)) {
-      byZone.set(record.zoneKey, []);
+    const groupValue = toGroupKey(groupBy(record));
+    if (!byZone.has(groupValue)) {
+      byZone.set(groupValue, []);
     }
-    byZone.get(record.zoneKey).push(record);
+    byZone.get(groupValue).push(record);
   }
 
   const zoneEntries = [...byZone.entries()]
-    .map(([zoneKey, items]) => ({
-      zoneKey,
-      companyActivity: items[0].companyActivity,
+    .map(([groupValue, items]) => ({
+      groupValue,
+      companyActivity: groupValue,
       records: [...items].sort((a, b) => a.accountName.localeCompare(b.accountName, undefined, { sensitivity: 'base' })),
     }))
     .sort((a, b) => a.companyActivity.localeCompare(b.companyActivity, undefined, { sensitivity: 'base' }));
@@ -69,4 +75,8 @@ export function layoutGridByZone(records, config) {
     x: (record.gridX - centerX) * stride,
     z: (record.gridZ - centerZ) * stride,
   }));
+}
+
+export function layoutGridByZone(records, config) {
+  return layoutGrid(records, config, (record) => record.companyActivity);
 }
