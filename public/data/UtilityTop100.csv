@@ -1,0 +1,106 @@
+﻿Account Owner,Account Name,,"Customer Value Classification
+High (5) to Low (1)",Current Main Supplier (Idox or Competitor Name),Estimated Competitor Value (per annum),Estimated Upsell Value/Opps in SF (per annum),Main Product / Service Offer,Renewal Date,Total Spend This Year
+,,Company Activity,,,,,,,
+,,,,,,,,,
+Ben Griffith,Affinity Water,Water/Waste,4,Cadcorp," £343,000.00 ",,"Address & Mastermap, then Water company upsell plan",,
+Natalie Stevens,Allpoints Fibre Networks Limited,Telco,2,ESRI," £100,000.00 ",,Win back opportunity,," £10,792.92 "
+Natalie Stevens,Anesco Limited,Renewables,2,Idox,," £25,000.00 ","Flood, Planning, T5",," £25,228.76 "
+Daniel Clements,Anglian Water,Water/Waste,5,ESRI," £970,000.00 ",,"Mastermap, Address then Water upsell plan",31/03/2027,
+Ben Ruhrmund,BES Utilities (now Ruby Energy),Energy,2,Unknown," £50,000.00 ",,Unknown,,
+Ben Griffith,BOC,Energy,3,Unknown," £150,000.00 ",,Address & Mastermap,,
+Natalie Stevens,Boldyn Networks UK Limited,Telco,2,Idox,," £18,000.00 ",Consultancy,," £33,629.41 "
+Natalie Stevens,British Pipeline Agency (BPA),Energy,2,Unknown," £59,000.00 ",,"Address & Mastermap, T5, Subsidence",,
+Tony Mabey,Bristol Water,Water/Waste,2,Ordnance Survey," £86,513.00 ",,"Asset Mapping, part of Pennon Group Procurement with South West Water",31/03/2027,
+Daniel Clements,British Gas ,Energy,5,Unknown," £480,000.00 ",,OS don't think they licence any data - upsell via TwentyCI,,
+Tony Mabey,BT,Telco,2,Ordnance Survey," £50,000.00 ",,Consultancy,,
+Tony Mabey,Cadent Gas,Energy,5,ESRI," £1,389,873.57 "," £30,000.00 ","Asset Mapping, planning",30/09/2028,
+Ben Griffith,Causeway Technologies Limited,Infrastructure (Transport),3,Idox," £80,000.00 ",,Web services and Landpack,," £111,210.00 "
+Ben Ruhrmund,CEMEX,Infrastructure (Transport),2,Idox,," £40,000.00 ","Landpack Commercial Ownership, OSVM and Utility Reports ",," £15,290.91 "
+Daniel Clements,Centrica Storage,Energy,2,Unknown," £55,000.00 ",,Address & Mastermap,,
+Daniel Slater,CityFibre Limited,Telco,5,Idox," £100,000.00 "," £150,000.00 ",Business intelligence (experian/market Location),31/03/2027," £1,213,759.00 "
+Ben Griffith,CNG Services Ltd,Energy,2,Unknown," £50,000.00 ",,MasterMap,,
+Ben Ruhrmund,Colt Technology Services,Telco,3,Idox,," £100,000.00 ","Landpack CO, additional mapping OSMM and address",," £184,317.66 "
+Natalie Stevens,Community Fibre - merged with Box,Telco,2,ESRI," £57,000.00 ",,Addressbase Prem and Landpack,,
+Natalie Stevens,"Connexin (England, London and Hull)",Telco,2,Landmark," £53,000.00 ",,"OS Mastermap, WMS, Address",,
+Daniel Clements,Dalcour Maclaren Ltd,Infrastructure (Transport),2,Idox,," £50,000.00 ","Managed Service, Planning",," £24,594.42 "
+Tony Mabey,Dwr Cymru Welsh Water,Water/Waste,4,Ordnance Survey," £472,621.00 ",,"Mastermap, Address then Water upsell plan",30/03/2027,
+Ben Griffith,E.ON Energy,Energy,3,Unknown," £300,000.00 ",,"Planning, OS data, Address",,
+Ben Ruhrmund,Ecotricity Generation Limited,Energy,2,Idox,," £50,000.00 ",Address,," £9,578.84 "
+Nancy Chirau,EDF Energy limited,Energy,5,ESRI," £1,000,000.00 ",,"Address & Mastermap, then Energy upsell plan",," £15,082.38 "
+Tony Mabey,Electricity North West,Energy,4,Ordnance Survey," £351,317.00 ",,"Mastermap, Address then Energy upsell plan",31/08/2026,
+Ben Ruhrmund,ES Pipelines Ltd,Energy,2,Idox,," £25,000.00 ",Mapping & Utility Reports,," £30,036.23 "
+Natalie Stevens,ESSO,Energy,2,Unknown," £55,000.00 ",,Mastermap,,
+Natalie Stevens,Fibre Assets Limited T/A Connect Fibre,Telco,3,Idox,," £20,000.00 ","Landpack, Flood and Planning",," £181,248.52 "
+Ben Griffith,Fibrus Networks GB Ltd,Telco,2,ESRI," £25,000.00 ",,HMLR and Address,," £10,310.16 "
+Daniel Clements,Full Fibre Ltd,Telco,2,Idox,," £2,000.00 ",Small holding growth,," £57,822.18 "
+Natalie Stevens,"G.Network (London, England)",Telco,2,ESRI," £60,000.00 ",,"Address, MasterMap, Landpack, Building Age",,
+Ben Ruhrmund,Gamma,Telco,2,Unknown," £50,000.00 ",,Address,,
+Natalie Stevens,"giffgaff (Slough, Berkshire, England)",Telco,2,Unknown," £50,000.00 ",,Address,,
+Daniel Clements,GOFIBRE HOLDINGS LIMITED,Telco,4,Idox,," £30,000.00 ",Mapping and Address,," £281,196.32 "
+Ben Ruhrmund,Green Energy UK,Energy,3,Unknown," £150,000.00 ",,Address,,
+Natalie Stevens,GRIDSERVE EMEA DEPC LTD,Telco,2,Idox,," £10,000.00 ",Aerial Imagery,," £59,860.20 "
+Nancy Chirau,Heathrow Airport Limited,Infrastructure (Transport),3,Idox,," £30,000.00 ",Spatial Share,," £169,001.43 "
+Ben Ruhrmund,Hyperoptic Ltd,Telco,2,Idox,," £50,000.00 ",Address,," £23,803.70 "
+Natalie Stevens,KCOM,Telco,2,Landmark," £50,000.00 ",,Mastermap and Address,,
+Daniel Clements,Mainline Pipelines,Telco,2,Unknown," £55,000.00 ",,MasterMap,,
+Tony Mabey,National Gas Transmission,Energy,3,Ordnance Survey," £149,043.00 ",,"Mastermap, Address then Energy upsell plan",31/01/2027,
+Tony Mabey,National Grid Electricity Transmission,Energy,3,Ordnance Survey," £167,481.00 ",,"Mastermap, Address then Energy upsell plan",31/01/2027,
+Natalie Stevens,Natural Power Consultants Ltd,Renewables,2,Idox,," £30,000.00 ","Flood, Planning, Consultancy",," £36,234.74 "
+Daniel Clements,Neos Networks Limited,Telco,4,Idox,," £75,000.00 ",Business intelligence,," £208,589.60 "
+Tony Mabey,Northern Gas Networks,Energy,4,Ordnance Survey," £403,552.00 ",,"Mastermap, Address then Energy upsell plan",31/03/2027,
+Tony Mabey,Northumbrian Water,Water/Waste,4,Ordnance Survey," £381,003.00 ",,"Mastermap, Address then Water upsell plan",30/06/2027,
+Ben Griffith,Octopus Energy ,Energy,3,Unknown," £165,000.00 ",,"Address, CodePoint",,
+Tony Mabey,Openreach,Telco,5,Ordnance Survey," £5,076,111.00 "," £250,000.00 ","Asset Mapping, existing consultancy opportunity",30/06/2027,
+Daniel Clements,Orsted Onshore UK Limited,Renewables,2,Idox,," £7,500.00 ",Planning,," £69,078.82 "
+Ben Griffith,Ovo Energy ,Energy,5,Unknown," £165,000.00 ",,"Address, CodePoint",,
+Daniel Clements,Portsmouth Water,Water/Waste,2,ESRI / OS," £55,000.00 ",,"Address & Mastermap, then Water company upsell plan",,
+Natalie Stevens,"Quickline (East Riding of Yorkshire, England)",Telco,3,Landmark," £215,000.00 ",,"Mastermap, RAMI",,
+Daniel Clements,RES Ltd,Renewables,3,Idox,," £15,000.00 ","Landpack, Planning",," £121,731.15 "
+Daniel Slater,(Vodafone) Ricoh UK Limited,Telco,5,Idox," £750,000.00 "," £295,000.00 ",non OS data on mobile side especially DSM models,31/03/2028," £1,164,860.00 "
+Tony Mabey,Royal Mail Group,Infrastructure (Transport),5,Ordnance Survey," £674,407.00 ",,Asset Mapping,31/08/2026,
+Ben Ruhrmund,RWE,Renewables,3,Idox,," £75,000.00 ","OSMM, Utility Reports, Marine, Web Services",," £20,497.02 "
+Ben Ruhrmund,RWE Generation UK PLC,Renewables,2,Idox,," £25,000.00 ","OSMM, Utility Reports, Marine, Web Services",," £11,562.52 "
+Ben Ruhrmund,RWE Renewables Management UK Limited,Renewables,2,Idox,," £25,000.00 ","OSMM, Utility Reports, Marine, Web Services",," £23,429.52 "
+Ben Ruhrmund,RWE Renewables UK Solar and Storage Limited,Renewables,3,Idox,," £50,000.00 ","OSMM, Utility Reports, Marine, Web Services",," £62,719.75 "
+Ben Ruhrmund,Sainsbury's Energy ,Energy,3,Unknown," £165,000.00 ",,"Address, CodePoint",,
+Natalie Stevens,Scottish & Southern Electricity Networks (SSEN),Energy,5,Landmark," £930,000.00 ",,"Mastermap, Address, VML (Colour Vector, T5, 50k, 25k",,
+Natalie Stevens,SCOTTISH HYDRO ELECTRIC POWER DISTRIBUTION PLC,Energy,2,Idox,," £50,000.00 ","Marine, MasterMap, Address, HMLR",," £5,533.51 "
+Daniel Clements,Scottish Power Renewables (UK) Ltd,Renewables,2,Idox,," £10,000.00 ",NI Addressing,," £79,531.55 "
+Tony Mabey,Scottish Power UK Ltd (SPEN),Energy,5,Ordnance Survey," £774,242.00 ",,Asset Mapping,31/08/2026,
+Tony Mabey,Sutton & South East Water (SES),Water/Waste,2,ESRI," £50,000.00 ",,Mastermap,,
+Tony Mabey,SGN Scotia Gas Networks,Energy,5,Idox,," £200,530.00 ",Asset Mapping & OS migration upsell plan,30/04/2029," £839,001.00 "
+Tony Mabey,Sky UK Limited,Telco,4,Unknown," £302,793.00 ",,Asset Mapping,30/09/2026,
+Daniel Clements,So Energy,Energy,3,Unknown," £20,000.00 ",,Mastermap,,
+Ben Griffith,South East Water,Water/Waste,4,Idox,," £93,000.00 ","Mastermap, Address then Water upsell plan",31/03/2029," £173,409.36 "
+Ben Griffith,South Staffordshire Water (includes Cambridge Water),Water/Waste,3,ESRI," £283,000.00 ",,"Mastermap, Address and then Water upsell plan",,
+Tony Mabey,"Pennon (includes Bristol Water, Bournement Water, South East & Surrey Water and South West Water Limited",Water/Waste,4,Ordnance Survey," £350,000.00 ",,"Mastermap, Address then Water upsell plan",31/03/2027,
+Ben Ruhrmund,Southern Water Services Ltd,Water/Waste,5,Idox," £150,000.00 "," £216,000.00 ","Bluesky web service, compass software for Sludge management",," £409,127.86 "
+Natalie Stevens,Spectrum Fibre Limited T/A Ogi,Telco,2,Idox,," £32,500.00 ","Planning, Market Location Data",," £39,874.67 "
+Natalie Stevens,SSE,Energy,5,Landmark," £1,610,154.00 ",,OS,31/03/2027," £15,101.20 "
+Natalie Stevens,SSE Renewables Services (UK) Limited,Renewables,2,Idox,, £-   ,See below,," £63,778.69 "
+Natalie Stevens,SSE Renewables Services (UK) Limited,Renewables,3,Idox,," £60,000.00 ","Aerial Imagery, MapCloud, Landpack, Flood, PS & Training, HMLR",," £165,958.14 "
+Fiona Frost,TalkTalk (owned by PXC),Telco,2,Unknown, - ," £85,000.00 ",Address,,
+Ben Ruhrmund,Thames Water,Water/Waste,5,ESRI/Verisk," £750,000.00 ",,Mapping & Address,,
+Natalie Stevens,"4th Utility (Cheshire, England)",Telco,2,Unknown," £30,000.00 ",,Address & Landpack (via unknown competitor),,
+Fiona Frost,Toob Ltd,Telco,2,Idox,,,,," £54,176.72 "
+Natalie Stevens,Total Energies,Energy,3,Unknown," £165,000.00 ",,Address,,
+Daniel Slater,(Severn Trent Water) Trustmarque Solutions Ltd,Water/Waste,5,Idox," £250,000.00 "," £330,000.00 ","envirocheck, ESRI s/w, ",31/03/2029," £1,101,467.00 "
+Tony Mabey,UKPN Eastern Power Networks,Energy,5,Ordnance Survey," £769,428.00 ",,Asset Mapping,31/03/2027,
+Tony Mabey,UKPN London Power Networks,Energy,2,Ordnance Survey," £72,688.00 ",,Asset Mapping,31/03/2027,
+Tony Mabey,UKPN South Eastern Power Networks,Energy,4,Ordnance Survey," £360,808.00 ",,"Mastermap, Address then Energy upsell plan",31/03/2027,
+Daniel Clements,United Utilities Water Limited,Energy,5,Landmark," £520,000.00 "," £100,000.00 ","Upsell plan, plus consultancy",," £17,120.00 "
+Natalie Stevens,Vattenfall Wind Power Ltd,Renewables,2,Idox,," £60,000.00 ","HMLR Title Registers, Training, Planning, Flood, Marine, 25k, Aerial Imagery, MasterMap",," £58,664.07 "
+Daniel Clements,Veolia,Infrastructure (Transport),2,Unknown," £58,000.00 ",,Mastermap,,
+Ben Griffith,Virgin Media,Telco,5,Europa," £1,800,000.00 ",,Asset Mapping,30/09/2028,
+Fiona Frost,Voneus,Telco,2,Unknown," £50,000.00 ",,Mastermap,,
+Tony Mabey,Vorboss,Telco,2,Idox,," £20,000.00 ",Business inteligence,22/05/2027," £42,256.59 "
+Natalie Stevens,Wales & West Utilities Limited,Energy,5,Idox," £250,000.00 "," £112,000.00 ","Ambiental Flood £150k + Esri services, consultancy",," £611,903.69 "
+Daniel Clements,Welsh Power,Energy,2,Unknown," £55,000.00 ",,"Address & Mastermap, then Water company upsell plan",,
+Tony Mabey,Wessex Water,Water/Waste,4,Europa," £293,845.00 ",,"Mastermap, Address then Water upsell plan",31/03/2029,
+Ben Ruhrmund,Yorkshire Water Services,Water/Waste,4,Landmark / Ordnance Survey," £497,143.00 ",,Asset Mapping,02/04/2029,
+Natalie Stevens,Zen,Telco,2,Unknown," £50,000.00 ",,Address,,
+Daniel Clements,Zzoomm Plc,Telco,2,Idox,," £2,000.00 ",Small holding growth,," £67,383.18 "
+Ben Ruhrmund,Line Search Before U Dig,Infrastructure (Transport),2,Ordnance Survey, £-   ," £50,000.00 ",Planning data,,
+Ben Griffith,Northern Powergrid,Energy,4,Unknown," £350,000.00 ",,"Mastermap, Address then Energy upsell plan",,
+Natalie Stevens,Platform X Communications,Telco,2,GB Group," £150,000.00 ",,Address solution,,
+Ben Griffith,Scottish Water,Water/Waste,2,Unknown," £200,000.00 ",,Other data / consultancy,,
