@@ -3,8 +3,8 @@ import { SUPPLIER_COLORS } from '../config.js';
 const HEADER_ALIASES = {
   owner: ['Account Owner', 'Owner'],
   accountName: ['Account Name'],
-  companyActivity: ['Company Activity', 'Sector', 'Activity'],
-  classification: ['Classification', 'Class'],
+  companyActivity: ['Company Activity', 'Sector', 'Activity', '__col_2'],
+  classification: ['Classification', 'Class', 'Customer Value Classification High (5) to Low (1)'],
   supplierRaw: ['Current Main Supplier (Idox or Competitor Name)', 'Supplier', 'Supplier '],
   competitorValue: ['Estimated Competitor Value', 'Estimated Competitor Value (per annum)', 'Potential ACV', 'Potential Value'],
   upsellValue: ['Estimated Upsell Value', 'Estimated Upsell Value/Opps in SF (per annum)', 'Upsell Value', 'Upsell'],

@@ -1,12 +1,14 @@
-function parseCsvLine(line) {
-  const values = [];
+function parseCsvRows(text) {
+  const rows = [];
+  let row = [];
   let current = '';
   let inQuotes = false;
 
-  for (let i = 0; i < line.length; i += 1) {
-    const char = line[i];
+  for (let i = 0; i < text.length; i += 1) {
+    const char = text[i];
+
     if (char === '"') {
-      if (inQuotes && line[i + 1] === '"') {
+      if (inQuotes && text[i + 1] === '"') {
         current += '"';
         i += 1;
       } else {
@@ -16,7 +18,21 @@ function parseCsvLine(line) {
     }
 
     if (char === ',' && !inQuotes) {
-      values.push(current);
+      row.push(current);
+      current = '';
+      continue;
+    }
+
+    if ((char === '\n' || char === '\r') && !inQuotes) {
+      if (char === '\r' && text[i + 1] === '\n') {
+        i += 1;
+      }
+      row.push(current);
+      const isNonEmpty = row.some((value) => value.trim().length > 0);
+      if (isNonEmpty) {
+        rows.push(row.map((value) => value.trim()));
+      }
+      row = [];
       current = '';
       continue;
     }
@@ -24,25 +40,47 @@ function parseCsvLine(line) {
     current += char;
   }
 
-  values.push(current);
-  return values;
+  if (current.length > 0 || row.length > 0) {
+    row.push(current);
+    const isNonEmpty = row.some((value) => value.trim().length > 0);
+    if (isNonEmpty) {
+      rows.push(row.map((value) => value.trim()));
+    }
+  }
+
+  return rows;
+}
+
+function buildHeaders(headerValues) {
+  const seen = new Set();
+  return headerValues.map((header, index) => {
+    const base = header.trim() || `__col_${index}`;
+    if (!seen.has(base)) {
+      seen.add(base);
+      return base;
+    }
+    let suffix = 2;
+    let candidate = `${base}__${suffix}`;
+    while (seen.has(candidate)) {
+      suffix += 1;
+      candidate = `${base}__${suffix}`;
+    }
+    seen.add(candidate);
+    return candidate;
+  });
 }
 
 export function parseCsv(text) {
   const normalized = text.replace(/^\uFEFF/, '');
-  const lines = normalized
-    .split(/\r?\n/)
-    .map((line) => line.trimEnd())
-    .filter((line) => line.length > 0);
+  const rows = parseCsvRows(normalized);
 
-  if (!lines.length) {
+  if (!rows.length) {
     return [];
   }
 
-  const headers = parseCsvLine(lines[0]).map((header) => header.trim());
+  const headers = buildHeaders(rows[0]);
 
-  return lines.slice(1).map((line) => {
-    const values = parseCsvLine(line);
+  return rows.slice(1).map((values) => {
     const row = {};
 
     headers.forEach((header, index) => {
