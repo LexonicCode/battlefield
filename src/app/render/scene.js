@@ -58,26 +58,31 @@ function createZoneLabel(activity) {
   if (!context) {
     return new THREE.Object3D();
   }
-  canvas.width = 560;
-  canvas.height = 132;
-  context.fillStyle = 'rgba(255,255,255,0.92)';
-  context.strokeStyle = '#ced7e5';
+  canvas.width = 420;
+  canvas.height = 94;
+  context.fillStyle = 'rgba(255,255,255,0.97)';
+  context.strokeStyle = '#c7d2e2';
   context.lineWidth = 3;
   context.strokeRect(1.5, 1.5, canvas.width - 3, canvas.height - 3);
   context.fillRect(1.5, 1.5, canvas.width - 3, canvas.height - 3);
   context.fillStyle = '#111827';
-  context.font = '600 44px Inter, Arial, sans-serif';
+  context.font = '600 34px Inter, Arial, sans-serif';
   context.textAlign = 'center';
   context.textBaseline = 'middle';
   context.fillText(activity, canvas.width / 2, canvas.height / 2);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.needsUpdate = true;
-  const material = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false });
-  const sprite = new THREE.Sprite(material);
-  sprite.scale.set(12, 2.8, 1);
-  sprite.renderOrder = 10;
-  return sprite;
+  const material = new THREE.MeshBasicMaterial({
+    map: texture,
+    transparent: true,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+  });
+  const label = new THREE.Mesh(new THREE.PlaneGeometry(8.8, 1.9), material);
+  label.rotation.x = -Math.PI / 2;
+  label.renderOrder = 10;
+  return label;
 }
 
 function setTooltip(tooltip, data, x, y) {
@@ -104,14 +109,27 @@ function accountId(record) {
 function clearGroup(group) {
   while (group.children.length) {
     const child = group.children.pop();
-    if (child?.material?.map) {
-      child.material.map.dispose();
+    if (child?.geometry) {
+      child.geometry.dispose();
     }
-    if (child?.material) {
-      child.material.dispose();
+    const materials = Array.isArray(child?.material) ? child.material : [child?.material];
+    for (const material of materials) {
+      if (!material) {
+        continue;
+      }
+      if (material.map) {
+        material.map.dispose();
+      }
+      material.dispose();
     }
     group.remove(child);
   }
+}
+
+function computeGridAxisOffset(sampleCoordinate, stride, divisions) {
+  const normalized = sampleCoordinate / stride + divisions / 2;
+  const shiftCells = normalized - 0.5 - Math.floor(normalized - 0.5);
+  return shiftCells * stride;
 }
 
 function buildAlignedGrid(positioned) {
@@ -130,7 +148,12 @@ function buildAlignedGrid(positioned) {
   const size = divisions * stride;
 
   const grid = new THREE.GridHelper(size, divisions, '#c6d3e5', '#dbe4f0');
-  grid.position.y = 0.01;
+  const sample = positioned[0];
+  grid.position.set(
+    computeGridAxisOffset(sample.x, stride, divisions),
+    0.01,
+    computeGridAxisOffset(sample.z, stride, divisions),
+  );
   return grid;
 }
 
@@ -270,9 +293,9 @@ export async function createBattlefieldScene({ container, legend, tooltip, stats
       const minX = Math.min(...records.map((record) => record.x));
       const maxX = Math.max(...records.map((record) => record.x));
       const minZ = Math.min(...records.map((record) => record.z));
-      const maxHeight = Math.max(...records.map((record) => record.scaledHeight));
+      const stride = GRID_CONFIG.cellSize + GRID_CONFIG.cellGap;
       const label = createZoneLabel(getAttributeLabel(attribute, value));
-      label.position.set((minX + maxX) / 2, maxHeight + 1.5, minZ - 1.8);
+      label.position.set((minX + maxX) / 2, 0.03, minZ - stride * 0.75);
       labelGroup.add(label);
     }
 
