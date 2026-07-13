@@ -7,8 +7,8 @@ export const GRID_CONFIG = {
 };
 
 export const HEIGHT_CONFIG = {
-  minHeight: 0.75,
-  maxHeight: 22,
+  minHeight: 0.375,
+  maxHeight: 11,
 };
 
 export const SUPPLIER_COLORS = {

@@ -137,4 +137,4 @@ By `Current Main Supplier (Idox or Competitor Name)`:
 - Hover tooltip with account details and computed total
 - Click to pin tooltip, `Esc` to clear
 - Light UI/theme (white/pale-grey background with white surface/panels)
-- In-scene labels for each `Company Activity` zone
+- Flat base-plate labels for each active cluster zone (updates with filters)
