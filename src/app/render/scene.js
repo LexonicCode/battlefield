@@ -60,15 +60,14 @@ function createZoneLabel(activity) {
   }
   canvas.width = 420;
   canvas.height = 94;
-  context.fillStyle = 'rgba(255,255,255,0.97)';
-  context.strokeStyle = '#c7d2e2';
-  context.lineWidth = 3;
-  context.strokeRect(1.5, 1.5, canvas.width - 3, canvas.height - 3);
-  context.fillRect(1.5, 1.5, canvas.width - 3, canvas.height - 3);
   context.fillStyle = '#111827';
   context.font = '600 34px Inter, Arial, sans-serif';
   context.textAlign = 'center';
   context.textBaseline = 'middle';
+  context.shadowColor = 'rgba(255,255,255,0.75)';
+  context.shadowBlur = 8;
+  context.shadowOffsetX = 0;
+  context.shadowOffsetY = 0;
   context.fillText(activity, canvas.width / 2, canvas.height / 2);
 
   const texture = new THREE.CanvasTexture(canvas);
@@ -192,7 +191,7 @@ export async function createBattlefieldScene({ container, legend, tooltip, stats
   scene.background = new THREE.Color('#edf3fb');
 
   const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 3000);
-  camera.position.set(0, 95, 125);
+  camera.position.set(0, 72, 88);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(container.clientWidth, container.clientHeight);
@@ -234,6 +233,7 @@ export async function createBattlefieldScene({ container, legend, tooltip, stats
   }
 
   let grid = null;
+  let didSetInitialView = false;
   const labelGroup = new THREE.Group();
   scene.add(labelGroup);
 
@@ -292,11 +292,29 @@ export async function createBattlefieldScene({ container, legend, tooltip, stats
     for (const [value, records] of groupedRecords.entries()) {
       const minX = Math.min(...records.map((record) => record.x));
       const maxX = Math.max(...records.map((record) => record.x));
-      const minZ = Math.min(...records.map((record) => record.z));
+      const maxZ = Math.max(...records.map((record) => record.z));
       const stride = GRID_CONFIG.cellSize + GRID_CONFIG.cellGap;
       const label = createZoneLabel(getAttributeLabel(attribute, value));
-      label.position.set((minX + maxX) / 2, 0.03, minZ - stride * 0.75);
+      label.position.set((minX + maxX) / 2, 0.03, maxZ + stride * 0.75);
       labelGroup.add(label);
+    }
+
+    if (!didSetInitialView && positioned.length) {
+      const stride = GRID_CONFIG.cellSize + GRID_CONFIG.cellGap;
+      const minX = Math.min(...positioned.map((record) => record.x));
+      const maxX = Math.max(...positioned.map((record) => record.x));
+      const minZ = Math.min(...positioned.map((record) => record.z));
+      const maxZ = Math.max(...positioned.map((record) => record.z));
+      const maxHeight = Math.max(...positioned.map((record) => record.scaledHeight));
+      const centerX = (minX + maxX) / 2;
+      const centerZ = (minZ + maxZ) / 2 + stride * 0.4;
+      const width = maxX - minX + GRID_CONFIG.columnWidth;
+      const depth = maxZ - minZ + GRID_CONFIG.columnWidth + stride * 1.6;
+      const span = Math.max(width, depth);
+      controls.target.set(centerX, Math.max(2.5, maxHeight * 0.32), centerZ);
+      camera.position.set(centerX, Math.max(28, maxHeight * 2.15 + 10), centerZ + span * 0.78 + 8);
+      controls.update();
+      didSetInitialView = true;
     }
 
     const clusterLabel = CLUSTER_OPTIONS.find((option) => option.key === attribute)?.label ?? 'Category';
